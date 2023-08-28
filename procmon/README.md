@@ -25,7 +25,7 @@
  * Download Kafka and Zookeeper binaries
  * Download crossbar
  * Install necessary Python packages
-   * TODO: Update
+   `pip install -r requirements.txt`
 
 ## Steps to start
  1. Start Zookeeper + Kafka with default config
