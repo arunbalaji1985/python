@@ -15,7 +15,7 @@ def get_stats():
     results['mem'] = int(memory.percent)
 
     # Push disk space of one partition for sample
-    results['disk'] = psutil.disk_usage(psutil.disk_partitions()[0].mountpoint).percent
+    results['disk'] = int(psutil.disk_usage(psutil.disk_partitions()[0].mountpoint).percent)
 
     return results
 

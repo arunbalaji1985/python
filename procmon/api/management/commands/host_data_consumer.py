@@ -22,10 +22,11 @@ async def called_on_joined(session, details):
     kafka_consumer = KafkaConsumer('host_data')
     for message in kafka_consumer:
         stats = json.loads(bytes.decode(message.value))
-        print(stats)
         if 'ip' in stats:
             ip = stats['ip']
+            # sync
             # obj = api_models.HostData.objects.get(ip=ip)
+            # async
             obj = await sync_to_async(api_models.HostData.objects.get, thread_sensitive=True)(ip=ip)
             session.publish('host_data', obj.toJS())
 

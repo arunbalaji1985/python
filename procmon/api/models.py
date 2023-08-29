@@ -19,3 +19,6 @@ class HostData(models.Model):
 
     def toJSON(self):
         return json.dumps(self.toJS())
+    
+    def __str__(self):
+        return self.toJSON()

@@ -2,10 +2,13 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import serializers, validators
 from kafka import KafkaProducer
+from django.db.models import functions
 
 from . import models
 
+import datetime
 import json
+import pytz
 
 class HostDataSerializer(serializers.ModelSerializer):
     kafka_producer = KafkaProducer(value_serializer=lambda m: m.toJSON().encode('utf-8'))
@@ -27,7 +30,8 @@ class HostDataSerializer(serializers.ModelSerializer):
         Overridden implementation to handle upsert with POST call.
         Update host data, using the IP as unique identifier.
         """
-        res, created = models.HostData.objects.update_or_create(ip=validated_data['ip'], defaults=validated_data)
+        row = validated_data | {'ts': datetime.datetime.now(pytz.utc)}
+        res, created = models.HostData.objects.update_or_create(ip=validated_data['ip'], defaults=row)
         # If created/updated, send a message to kafka topic
         if res:
             self.kafka_producer.send('host_data', res)
