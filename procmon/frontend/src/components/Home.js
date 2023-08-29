@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react"
 import HostCard from "./HostCard"
 import loadExternalScript from "../util/loadExternalScript"
+import axios from 'axios'
+
+const HOST = '127.0.0.1'
 
 const Home = () => {
     const [loadAutobahn, setLoadAutobahn] = useState(false);
@@ -13,6 +16,12 @@ const Home = () => {
         })
     }
 
+    const fetchHostData = () => {
+        axios.get(`http://${HOST}:8000/api/v1/host/`)
+            .then(res => setHostData(res.data))
+            .catch(err => console.log(err));
+    }
+
     useEffect(() => {
         if (typeof autobahn === 'undefined') {
             console.log("Loading autobahn")
@@ -22,19 +31,22 @@ const Home = () => {
         setLoadAutobahn(true);
     }, [])
 
+    // Fetch initial snapshot
+    useEffect(() => {
+        fetchHostData()
+    }, [])
+
+    // Subscribe to real-time updates
     useEffect(() => {
         if (loadAutobahn) {
             window.addEventListener("load", () => {
                 /* Connection configuration to our WAMP router */
                 // eslint-disable-line
                 // eslint-disable no-undef
-                console.log("onload", autobahn)
                 const conn = new autobahn.Connection({
-                    url: 'ws://127.0.0.1:8080/ws',
+                    url: `ws://${HOST}:8080/ws`,
                     realm: 'realm1'
                 })
-                console.log(conn)
-                console.log("before open")
                 conn.onopen = (session) => {
                     console.log("connected!");
                     /* When we receive the 'host_data' event, run this function */
@@ -46,10 +58,12 @@ const Home = () => {
     }, [loadAutobahn])
 
     const onHostDataEvent = (args) => {
-        console.log("Received event", args)
         const stat = args[0]
         setHostData(prevHostData => {
-            return [...prevHostData.filter(prevStat => prevStat.ip !== stat.ip), stat]
+            const newHostData = [...prevHostData.filter(prevStat => prevStat.ip !== stat.ip), stat]
+            newHostData.sort((x, y) => (x.name.toLowerCase() > y.name.toLowerCase()) ? 1 :
+                (x.name.toLowerCase() < y.name.toLowerCase()) ? -1 : 0)
+            return newHostData
         })
     }
 
