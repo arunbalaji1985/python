@@ -7,6 +7,7 @@
  * Django (for collecting metrics)
  * WAMP router (for real time messaging over websockets) -- crossbar.io
  * Kafka for communication + Zookeeper
+ * ReactJS (for frontend)
 
 ## How it works
  * Starting Django app exposes HTTP endpoint to collect host metrics.
@@ -51,8 +52,13 @@
 ```
  python3 ./agent.py
 ```
+ 6. Start the frontend
+```
+ cd frontend
+ npm start
+```
 
- * Hit http://127.0.0.1:8000/ and you should be able to see a simple page that displays the host stats updating in realtime
+ * Hit http://127.0.0.1:3000/ and you should be able to see a simple page that displays the host stats updating in realtime
 
 ## TODO
  * Authentication
