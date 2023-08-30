@@ -1,0 +1,93 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    ports:
+      - "22181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      # KAFKA_CFG_NODE_ID: 0
+      # KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # KAFKA_CFG_PROCESS_ROLES: controller,broker
+      # KAFKA_CFG_LISTENERS: PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093,EXTERNAL://localhost:9094
+      # KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      # KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      # KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:29092", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+  crossbar:
+    build: ./crossbar
+    ports:
+      - '8082:8082'
+    healthcheck:
+      test: ["CMD", "crossbar", "status", "--assert", "running"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+
+  test-consumer:
+    build: ./tests
+    depends_on:
+      kafka:
+        condition: service_healthy
+      crossbar:
+        condition: service_healthy
+
+    environment:
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 9092
+      API_SERVER: crossbar
+
+  backend:
+    build: .
+    depends_on:
+      kafka:
+        condition: service_healthy
+      crossbar:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 9092
+      CROSSBAR_HOST: crossbar
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python3 manage.py migrate
+        python3 manage.py runserver 0.0.0.0:8000
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        BACKEND_HOST: backend
+        CROSSBAR_HOST: crossbar
+    depends_on:
+      - backend
+      - crossbar
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_HOST: backend
+      CROSSBAR_HOST: crossbar

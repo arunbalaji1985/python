@@ -9,9 +9,15 @@ from . import models
 import datetime
 import json
 import pytz
+import os
+
+KAFKA_HOST = os.environ.get('KAFKA_HOST', '127.0.0.1')
+KAFKA_PORT = os.environ.get('KAFKA_PORT', 9092)
+
+print(KAFKA_HOST + ":" + KAFKA_PORT)
 
 class HostDataSerializer(serializers.ModelSerializer):
-    kafka_producer = KafkaProducer(value_serializer=lambda m: m.toJSON().encode('utf-8'))
+    kafka_producer = KafkaProducer(bootstrap_servers=(KAFKA_HOST + ":" + KAFKA_PORT), value_serializer=lambda m: m.toJSON().encode('utf-8'))
 
     class Meta:
         # Serialize all fields of HostData

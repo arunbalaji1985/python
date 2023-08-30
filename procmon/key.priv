@@ -1,0 +1,11 @@
+Crossbar.io node private key - KEEP THIS SAFE!
+
+creator: arun@DESKTOP-5TFHEDB
+created-at: 2023-08-29T22:59:17.737Z
+machine-id: 256432c729eede526a8a66b864a56fed
+node-authid: DESKTOP-5TFHEDB
+node-cluster-ip: 127.0.0.1
+public-key-ed25519: c7ba44c8d8a1bf7a98e9e75d282666ec9a22742f1fab457202458eb0293f1113
+public-adr-eth: 0xEB05962692c408f870C78137dcc20C2FDDA18352
+private-key-ed25519: 528534a1ee56f13266aa2f1aabc3766f437cdc3839659476a36d46a443eea6ae
+private-key-eth: b9cc03ee7a74fc145faad81d258e23897941643d020f599da19016ed46ce0dce

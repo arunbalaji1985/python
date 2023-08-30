@@ -3,7 +3,8 @@ import HostCard from "./HostCard"
 import loadExternalScript from "../util/loadExternalScript"
 import axios from 'axios'
 
-const HOST = '127.0.0.1'
+const CROSSBAR_HOST = process.env.CROSSBAR_HOST || '127.0.0.1'
+const BACKEND_HOST = process.env.BACKEND_HOST || '127.0.0.1'
 
 const Home = () => {
     const [loadAutobahn, setLoadAutobahn] = useState(false);
@@ -17,7 +18,7 @@ const Home = () => {
     }
 
     const fetchHostData = () => {
-        axios.get(`http://${HOST}:8000/api/v1/host/`)
+        axios.get(`http://${BACKEND_HOST}:8000/api/v1/host/`)
             .then(res => setHostData(res.data))
             .catch(err => console.log(err));
     }
@@ -44,7 +45,7 @@ const Home = () => {
                 // eslint-disable-line
                 // eslint-disable no-undef
                 const conn = new autobahn.Connection({
-                    url: `ws://${HOST}:8080/ws`,
+                    url: `ws://${CROSSBAR_HOST}:8082/ws`,
                     realm: 'realm1'
                 })
                 conn.onopen = (session) => {

@@ -1,0 +1,14 @@
+FROM node:latest
+
+WORKDIR /app/frontend
+
+COPY . .
+
+ARG BACKEND_HOST 
+ENV BACKEND_HOST $BACKEND_HOST
+ARG CROSSBAR_HOST 
+ENV CROSSBAR_HOST $CROSSBAR_HOST
+
+RUN npm install
+
+CMD npm start

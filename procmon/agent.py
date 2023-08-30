@@ -4,6 +4,7 @@ import asyncio
 import aiohttp
 import requests
 import psutil
+import os
 
 def get_stats():
     results = {}
@@ -24,7 +25,7 @@ def get_stats():
 # from the outside. You should change this value
 # to the IP of the machine you put Crossbar.io
 # and Django.
-SERVER = '127.0.0.1'
+SERVER = os.environ.get('API_HOST', '127.0.0.1')
 
 from dataclasses import dataclass
 
