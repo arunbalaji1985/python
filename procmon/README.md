@@ -23,12 +23,17 @@
  * `agent.py` : Standalone agent that collect simple host stats and publishes to the django server
 
 ## Pre-requisites
+### Without Docker
  * Download Kafka and Zookeeper binaries
  * Download crossbar
  * Install necessary Python packages
    `pip install -r requirements.txt`
 
+### Dockerized setup (simple)
+ * Install docker and docker-compose
+
 ## Steps to start
+### Without Docker
  1. Start Zookeeper + Kafka with default config
 ```
  $KAFKA_HOME/bin/zookeeper-server-start.sh $KAFKA_HOME/config/zookeeper.properties
@@ -36,6 +41,7 @@
 ```
  2. Start crossbar WAMP router
 ```
+ cd crossbar
  crossbar start
 ```
  3. Start django server
@@ -59,6 +65,30 @@
 ```
 
  * Hit http://127.0.0.1:3000/ and you should be able to see a simple page that displays the host stats updating in realtime
+
+### Dockerized setup (simple)
+ 1. Start the docker services
+```
+  docker-compose build
+  docker-compose up
+```
+   * This will start the following components and servers in their respective containers
+     * crossbar router
+     * zookeeper
+     * kafka
+     * django backend server
+     * react frontend server
+     * (optional) test backend consumer
+
+ 2. Start the kafka queue consumer in the `backend` container. This will listen to `host_data` Kafka topic and publish the stats to the front-end over websockets
+```
+  env KAFKA_HOST=kafka docker-compose exec backend python3 manage.py host_data_consumer
+```
+ 3. Start the host agent
+```
+  cd procmon
+  python3 agent.py
+```
 
 ## TODO
  * Authentication
