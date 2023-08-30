@@ -93,7 +93,6 @@
 
 ## TODO
  * Authentication
- * Dockerize
 
 ## References
  * crossbar.io
