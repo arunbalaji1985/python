@@ -8,6 +8,7 @@
  * WAMP router (for real time messaging over websockets) -- crossbar.io
  * Kafka for communication + Zookeeper
  * ReactJS (for frontend)
+ * Docker (for containers)
 
 ## How it works
  * Starting Django app exposes HTTP endpoint to collect host metrics.
