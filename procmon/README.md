@@ -14,8 +14,8 @@
  * Starting Django app exposes HTTP endpoint to collect host metrics.
  * Agent running on host (localhost in this example) publishes host metrics via the endpoint.
  * The POST endpoint persits the data in sqlite3 (use only for development) DB and publishes the event to Kafka. The DB is used to handle back-pressure.
- * A Kafka consumer (api/management/commands/host_data_consumer.py) receives the event, queries the latest stats from the DB and publishes the stats over WAMP on a topic.
- * A WAMP consumer (home/templates/home/index.html) subscribes to the topic in the same WAMP realm and displays the latest stats in simple HTML list.
+ * A Kafka consumer (`api/management/commands/host_data_consumer.py`) receives the event, queries the latest stats from the DB and publishes the stats over WAMP on a topic.
+ * A WAMP consumer (`frontend` ReactJS app) subscribes to the topic in the same WAMP realm and displays the latest stats.
 
 ## Code organization
  * `crossbar` : Crossbar router config
