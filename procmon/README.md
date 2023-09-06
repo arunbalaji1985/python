@@ -1,6 +1,6 @@
 # Real time host monitor
 
-## An example implementation of realtime host monitor built in Python
+## An example implementation of realtime host monitor built in Python + Django + ReactJS + Crossbar router + Kafka
 
 ## Technologies
  * Python
