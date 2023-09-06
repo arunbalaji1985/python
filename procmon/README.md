@@ -18,10 +18,12 @@
  * A WAMP consumer (home/templates/home/index.html) subscribes to the topic in the same WAMP realm and displays the latest stats in simple HTML list.
 
 ## Code organization
+ * `crossbar` : Crossbar router config
  * `api` : Serves API to accept host data
    * `api/management/commands` : django management command that stars the kafka consumer
- * `home` : Simple Home page (plain HTML)
+ * `frontend` : ReactJS based frontend page
  * `agent.py` : Standalone agent that collect simple host stats and publishes to the django server
+ * `management` : Standalone Django command to consume messages from Kafka queue
 
 ## Pre-requisites
 ### Without Docker
