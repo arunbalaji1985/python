@@ -14,10 +14,14 @@ import os
 KAFKA_HOST = os.environ.get('KAFKA_HOST', '127.0.0.1')
 KAFKA_PORT = os.environ.get('KAFKA_PORT', 9092)
 
-print(KAFKA_HOST + ":" + KAFKA_PORT)
-
 class HostDataSerializer(serializers.ModelSerializer):
-    kafka_producer = KafkaProducer(bootstrap_servers=(KAFKA_HOST + ":" + KAFKA_PORT), value_serializer=lambda m: m.toJSON().encode('utf-8'))
+    __kafka_producer = None
+
+    @property
+    def kafka_producer(self):
+        if self.__kafka_producer is None:
+            self.__kafka_producer = KafkaProducer(bootstrap_servers=f"{KAFKA_HOST}:{KAFKA_PORT}", value_serializer=lambda m: m.toJSON().encode('utf-8'))
+        return self.__kafka_producer
 
     class Meta:
         # Serialize all fields of HostData
