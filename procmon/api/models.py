@@ -5,7 +5,7 @@ import json
 
 class HostData(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    ip = models.GenericIPAddressField(unique=True)
+    ip = models.GenericIPAddressField(unique=True, db_index=True)
     name = models.CharField(max_length=50, default='Unknown')
     cpu = models.FloatField()
     mem = models.IntegerField()
